@@ -1,0 +1,41 @@
+name: Update Weather Data
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Fetch weather
+        run: |
+          curl -s "wttr.in/Moscow?format=j1" > weather_raw.json
+      
+      - name: Parse and save
+        run: |
+          TEMP=$(cat weather_raw.json | jq -r '.current_condition[0].temp_C')
+          FEELS=$(cat weather_raw.json | jq -r '.current_condition[0].FeelsLikeC')
+          CITY=$(cat weather_raw.json | jq -r '.current_condition[0].weatherDesc[0].value')
+          WIND=$(cat weather_raw.json | jq -r '.current_condition[0].windspeedKmph')
+          HUM=$(cat weather_raw.json | jq -r '.current_condition[0].humidity')
+          
+          ICON="☁️"
+          if [[ "$CITY" == *"Clear"* ]]; then ICON="🌙"; fi
+          if [[ "$CITY" == *"Sunny"* ]]; then ICON="☀️"; fi
+          if [[ "$CITY" == *"Cloud"* ]]; then ICON="☁️"; fi
+          if [[ "$CITY" == *"Rain"* ]]; then ICON="🌧️"; fi
+          if [[ "$CITY" == *"Snow"* ]]; then ICON="❄️"; fi
+          
+          echo "{\"temp\":$TEMP,\"feels\":$FEELS,\"city\":\"Moscow\",\"desc\":\"$CITY\",\"icon\":\"$ICON\",\"wind\":$WIND,\"humidity\":$HUM,\"updated\":\"$(date -u +%Y-%m-%dT%H:%MZ)\"}" > api/weather.json
+          
+      - name: Commit and push
+        run: |
+          git config user.name "GitHub Bot"
+          git config user.email "bot@github.com"
+          git add api/weather.json
+          git commit -m "Update weather data" || true
+          git push
