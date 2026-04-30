@@ -20,7 +20,7 @@
             position: relative;
         }
         body.day-bg { background-image: url('day.jpg'); }
-        body.night-bg { background-image: url('evening.jpg'); }
+        body.night-bg { background-image: url('night.jpg'); }
         
         body::before {
             content: '';
@@ -221,7 +221,7 @@
         const WEATHERAPI_KEY = '5d57e78704dc42509fa93011261704';
         const DEFAULT_CITY = 'Moscow';
         const BG_DAY = 'day.jpg';
-        const BG_NIGHT = 'evening.jpg';
+        const BG_NIGHT = 'night.jpg';
         const FAVORITE_CITIES = [
             { name: 'Москва', lat: 55.7558, lon: 37.6176 },
             { name: 'Санкт-Петербург', lat: 59.9343, lon: 30.3351 },
@@ -384,7 +384,7 @@
                 const desc = conditionText;
                 // Определяем день/ночь по текущему времени (6:00-20:00 = день)
                 const currentHour = new Date().getHours();
-                const isDay = currentHour >= 6 && currentHour < 20;
+                const isDay = currentHour >= 6 && currentHour < 18;
                 let finalCity = cityName || data.location.name;
                 finalCity = translateCityName(finalCity);
                 
@@ -460,7 +460,7 @@
         
         const last = getLastCity();
         const currentHour = new Date().getHours();
-        updateBackground(currentHour >= 6 && currentHour < 20);
+        updateBackground(currentHour >= 6 && currentHour < 18);
 
         if (last && last.lat) {
             loadWeather(last.lat, last.lon, last.name);
