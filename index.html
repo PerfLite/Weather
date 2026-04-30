@@ -85,8 +85,7 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .animate-clouds { animation: floatCloud 3s ease-in-out infinite; display: inline-block; }
         @keyframes floatCloud { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-5px); } }
-        .animate-rain { animation: shakeRain 0.3s ease-in-out infinite; display: inline-block; position: relative; }
-        @keyframes shakeRain { 0%, 100% { transform: translateX(0px); } 50% { transform: translateX(-2px); } }
+        .animate-rain { display: inline-block; position: relative; }
         .animate-rain::before, .animate-rain::after {
             content: '💧';
             position: absolute;
