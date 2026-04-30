@@ -85,21 +85,7 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .animate-clouds { animation: floatCloud 3s ease-in-out infinite; display: inline-block; }
         @keyframes floatCloud { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-5px); } }
-        .animate-rain { display: inline-block; position: relative; font-size: 0; }
-        .animate-rain::before {
-            content: '🌧️';
-            font-size: 70px;
-            filter: brightness(0.5) saturate(1.4);
-        }
-        .animate-rain::after {
-            content: '⚡';
-            position: absolute;
-            font-size: 28px;
-            top: 35px;
-            left: 55px;
-            animation: flash 1s ease-in-out infinite;
-        }
-        @keyframes flash { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        
         .animate-storm { animation: flash 0.8s ease-in-out infinite; display: inline-block; }
         @keyframes flash { 0%, 100% { opacity: 1; text-shadow: 0 0 0px gold; } 50% { opacity: 0.7; text-shadow: 0 0 15px gold; } }
         .animate-snow { animation: snowFloat 2s ease-in-out infinite; display: inline-block; }
@@ -261,19 +247,15 @@
         function getWeatherIconFromCode(code) {
             const map = {
                 1000: '☀️', 1003: '🌤️', 1006: '☁️', 1009: '☁️', 1030: '🌫️',
-                1063: '🌧️', 1066: '❄️', 1087: '⛈️', 1114: '❄️', 1135: '🌫️',
-                1150: '🌧️', 1180: '🌧️', 1183: '🌧️', 1186: '🌧️', 1189: '🌧️',
-                1192: '🌧️', 1195: '🌧️', 1198: '🌧️', 1201: '🌧️', 1204: '🌨️',
+                1063: '⛈️', 1066: '❄️', 1087: '⛈️', 1114: '❄️', 1135: '🌫️',
+                1150: '⛈️', 1180: '⛈️', 1183: '⛈️', 1186: '⛈️', 1189: '⛈️',
+                1192: '⛈️', 1195: '⛈️', 1198: '⛈️', 1201: '⛈️', 1204: '🌨️',
                 1207: '🌨️', 1210: '❄️', 1213: '❄️', 1216: '❄️', 1219: '❄️',
-                1222: '❄️', 1225: '❄️', 1237: '🌨️', 1240: '🌧️', 1243: '🌧️',
-                1246: '🌧️', 1249: '🌨️', 1252: '🌨️', 1255: '❄️', 1258: '❄️',
+                1222: '❄️', 1225: '❄️', 1237: '🌨️', 1240: '⛈️', 1243: '⛈️',
+                1246: '⛈️', 1249: '🌨️', 1252: '🌨️', 1255: '❄️', 1258: '❄️',
                 1261: '🌨️', 1264: '🌨️', 1273: '⛈️', 1276: '⛈️', 1279: '⛈️', 1282: '⛈️'
             };
             return map[code] || '🌡️';
-        }
-        
-        function getRainIcon() {
-            return '🌧️';
         }
         
         // ========== 3D АНИМАЦИЯ ПЕРЕЛИСТЫВАНИЯ ==========
