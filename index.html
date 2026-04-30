@@ -84,15 +84,7 @@
         .cur-icon {
             position: relative;
         }
-        .icon-storm {
-            background-image: url('icons/Storm cloud-96px.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            width: 80px;
-            height: 64px;
-            display: inline-block !important;
-            font-size: 0 !important;
-        }
+        
         .cur-icon::after {
             content: '';
             position: absolute;
@@ -269,6 +261,8 @@
         
         // ========== ПЕРЕВОД КОДОВ WEATHERAPI В ЭМОДЗИ ==========
         function getWeatherIconFromCode(code) {
+            const rainCodes = [1063,1150,1180,1183,1186,1189,1192,1195,1198,1201,1240,1243,1246];
+            if (rainCodes.includes(code)) return '<img src="icons/Storm cloud-96px.png" style="width:80px;height:64px;">';
             const map = {
                 1000: '☀️', 1003: '🌤️', 1006: '☁️', 1009: '☁️', 1030: '🌫️',
                 1063: '🌧️', 1066: '❄️', 1087: '⛈️', 1114: '❄️', 1135: '🌫️',
@@ -412,12 +406,7 @@
                 let finalCity = cityName || data.location.name;
                 finalCity = translateCityName(finalCity);
                 
-                document.getElementById('curIcon').textContent = icon;
-                const iconEl = document.getElementById('curIcon');
-                iconEl.classList.remove('icon-storm');
-                if ([1063,1150,1180,1183,1186,1189,1192,1195,1198,1201,1240,1243,1246].includes(iconCode)) {
-                    iconEl.classList.add('icon-storm');
-                }
+                document.getElementById('curIcon').innerHTML = icon;
                 document.getElementById('curTemp').innerHTML = `${temp > 0 ? '+' : ''}${temp}°`;
                 document.getElementById('curCity').textContent = finalCity;
                 document.getElementById('curDesc').textContent = desc;
