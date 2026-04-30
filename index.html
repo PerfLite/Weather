@@ -566,7 +566,7 @@
         }
         function checkMidnight() {
             const hour = new Date().getHours();
-            const isNight = hour >= 0 && hour < 5;
+            const isNight = hour >= 23 || hour < 5;
             if (isNight && !midnightAnimating) {
                 midnightAnimating = true;
                 midnightCanvas.style.display = 'block';
