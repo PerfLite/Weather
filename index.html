@@ -566,8 +566,8 @@
         }
         function checkMidnight() {
             const hour = new Date().getHours();
-            const isMidnight = hour === 0;
-            if (isMidnight && !midnightAnimating) {
+            const isNight = hour >= 0 && hour < 5;
+            if (isNight && !midnightAnimating) {
                 midnightAnimating = true;
                 midnightCanvas.style.display = 'block';
                 midnightVignette.style.display = 'block';
@@ -576,7 +576,7 @@
                 document.body.style.backgroundColor = '#000205';
                 mSetup();
                 mAnimate();
-            } else if (!isMidnight && midnightAnimating) {
+            } else if (!isNight && midnightAnimating) {
                 midnightAnimating = false;
                 midnightCanvas.style.display = 'none';
                 midnightVignette.style.display = 'none';
