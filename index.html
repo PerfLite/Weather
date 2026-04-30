@@ -177,6 +177,7 @@
     <canvas id="midnightCanvas"></canvas>
     <div class="vignette" id="midnightVignette"></div>
     <div class="notif" id="notif"><span id="notifText"></span></div>
+    <div id="weatherData" style="display:none;"></div>
     <div class="app">
         <div class="top-bar">
             <div class="logo">
@@ -395,6 +396,17 @@
                 document.getElementById('curFeels').innerHTML = `ощущается ${feels > 0 ? '+' : ''}${feels}°`;
                 document.getElementById('curWind').innerHTML = `${wind} м/с`;
                 document.getElementById('curHum').innerHTML = `${hum}%`;
+                
+                const weatherJson = JSON.stringify({
+                    temp: temp,
+                    feels: feels,
+                    city: finalCity,
+                    desc: desc,
+                    icon: icon,
+                    wind: wind,
+                    humidity: hum
+                });
+                document.getElementById('weatherData').textContent = weatherJson;
                 
                 animateWeatherIcon(conditionText);
                 updateBackground(isDay);
