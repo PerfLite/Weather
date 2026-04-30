@@ -85,7 +85,19 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .animate-clouds { animation: floatCloud 3s ease-in-out infinite; display: inline-block; }
         @keyframes floatCloud { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-5px); } }
-        .animate-rain { display: inline-block; position: relative; filter: brightness(0.6) saturate(1.3); text-shadow: 0 0 10px rgba(100,100,150,0.5); }
+        .animate-rain { display: inline-block; position: relative; filter: brightness(0.5) saturate(1.4); animation: cloudPulse 3s ease-in-out infinite; }
+        @keyframes cloudPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+        .animate-rain::before {
+            content: '';
+            position: absolute;
+            width: 90px;
+            height: 70px;
+            background: radial-gradient(ellipse at center, rgba(60,60,80,0.5) 0%, transparent 70%);
+            top: 5px;
+            left: -15px;
+            z-index: -1;
+            border-radius: 50%;
+        }
         .animate-rain::before, .animate-rain::after {
             content: '💧';
             position: absolute;
@@ -271,6 +283,10 @@
                 1261: '🌨️', 1264: '🌨️', 1273: '⛈️', 1276: '⛈️', 1279: '⛈️', 1282: '⛈️'
             };
             return map[code] || '🌡️';
+        }
+        
+        function getRainIcon() {
+            return '🌧️';
         }
         
         // ========== 3D АНИМАЦИЯ ПЕРЕЛИСТЫВАНИЯ ==========
