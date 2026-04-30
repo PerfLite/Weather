@@ -1,0 +1,103 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 48px;
+    padding: 30px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 20px 35px rgba(0,0,0,0.2);
+}
+
+h1 {
+    text-align: center;
+    color: white;
+    margin-bottom: 25px;
+    font-size: 2rem;
+}
+
+.search-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+#cityInput {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 40px;
+    font-size: 1rem;
+    outline: none;
+    background: rgba(255,255,255,0.9);
+}
+
+#searchBtn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 40px;
+    background: #ff9800;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#searchBtn:hover {
+    background: #f57c00;
+    transform: scale(0.96);
+}
+
+.weather-card {
+    background: rgba(255,255,255,0.3);
+    border-radius: 32px;
+    padding: 25px;
+    text-align: center;
+    color: white;
+}
+
+.city {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.temp {
+    font-size: 3.5rem;
+    font-weight: bold;
+    margin: 15px 0;
+}
+
+.desc {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    text-transform: capitalize;
+}
+
+.humidity, .wind {
+    font-size: 1rem;
+    margin: 8px 0;
+    opacity: 0.9;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.7);
+}
