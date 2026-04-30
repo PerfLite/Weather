@@ -140,6 +140,29 @@
         
         .notif { display: none; }
         
+        #midnightCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            display: none;
+        }
+        
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.8) 100%);
+            pointer-events: none;
+            z-index: 1;
+            display: none;
+        }
+        
         @media (max-width: 600px) {
             .current-compact { flex-direction: column; text-align: center; }
             .cur-left { flex-direction: column; }
@@ -151,6 +174,8 @@
     </style>
 </head>
 <body class="day-bg">
+    <canvas id="midnightCanvas"></canvas>
+    <div class="vignette" id="midnightVignette"></div>
     <div class="notif" id="notif"><span id="notifText"></span></div>
     <div class="app">
         <div class="top-bar">
@@ -443,6 +468,124 @@
             loadWeather(55.7558, 37.6176, 'Москва');
         }
         renderFavorites();
+        
+        const midnightCanvas = document.getElementById('midnightCanvas');
+        const midnightVignette = document.getElementById('midnightVignette');
+        const mCtx = midnightCanvas.getContext('2d');
+        let mWidth, mHeight, mParticles = [], mStars = [];
+        const PARTICLE_COUNT = 100, STAR_COUNT = 200, CONNECTION_DIST = 160;
+        class MStar {
+            constructor() {
+                this.x = Math.random() * mWidth;
+                this.y = Math.random() * mHeight;
+                this.size = Math.random() * 1.2;
+                this.flickerSpeed = 0.01 + Math.random() * 0.03;
+                this.phase = Math.random() * Math.PI * 2;
+            }
+            update() {
+                this.phase += this.flickerSpeed;
+                this.currentOpacity = 0.2 + (Math.abs(Math.sin(this.phase)) * 0.6);
+            }
+            draw() {
+                mCtx.beginPath();
+                mCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                mCtx.fillStyle = `rgba(255, 255, 255, ${this.currentOpacity})`;
+                mCtx.fill();
+            }
+        }
+        class MParticle {
+            constructor() { this.init(); }
+            init() {
+                this.x = Math.random() * mWidth;
+                this.y = Math.random() * mHeight;
+                this.z = Math.random() * 1 + 0.5;
+                this.vx = (Math.random() - 0.5) * 0.2;
+                this.vy = (Math.random() - 0.5) * 0.2;
+                this.phase = Math.random() * Math.PI * 2;
+                this.phaseStep = 0.005 + Math.random() * 0.01;
+                this.radius = (Math.random() * 1.5 + 1) * this.z;
+                this.h = [190, 210, 250][Math.floor(Math.random() * 3)];
+                this.opacity = (Math.random() * 0.4 + 0.2) / this.z;
+            }
+            update() {
+                this.phase += this.phaseStep;
+                this.x += this.vx + Math.sin(this.phase) * 0.3;
+                this.y += this.vy + Math.cos(this.phase) * 0.3;
+                if (this.x < -50) this.x = mWidth + 50;
+                if (this.x > mWidth + 50) this.x = -50;
+                if (this.y < -50) this.y = mHeight + 50;
+                if (this.y > mHeight + 50) this.y = -50;
+            }
+            draw() {
+                mCtx.shadowBlur = 12 * this.z;
+                mCtx.shadowColor = `hsla(${this.h}, 80%, 60%, 0.4)`;
+                mCtx.beginPath();
+                mCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                mCtx.fillStyle = `hsla(${this.h}, 80%, 70%, ${this.opacity})`;
+                mCtx.fill();
+                mCtx.shadowBlur = 0;
+            }
+        }
+        function mResize() {
+            mWidth = midnightCanvas.width = window.innerWidth;
+            mHeight = midnightCanvas.height = window.innerHeight;
+        }
+        function mSetup() {
+            mResize();
+            mParticles = [];
+            mStars = [];
+            for (let i = 0; i < STAR_COUNT; i++) mStars.push(new MStar());
+            for (let i = 0; i < PARTICLE_COUNT; i++) mParticles.push(new MParticle());
+        }
+        function mDrawLines() {
+            for (let i = 0; i < mParticles.length; i++) {
+                for (let j = i + 1; j < mParticles.length; j++) {
+                    const p1 = mParticles[i], p2 = mParticles[j];
+                    const dx = p1.x - p2.x, dy = p1.y - p2.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < CONNECTION_DIST) {
+                        const alpha = (1 - dist / CONNECTION_DIST) * 0.15 * (p1.z * p2.z / 2);
+                        mCtx.beginPath();
+                        mCtx.lineWidth = 0.6 * p1.z;
+                        mCtx.strokeStyle = `hsla(${p1.h}, 80%, 60%, ${alpha})`;
+                        mCtx.moveTo(p1.x, p1.y);
+                        mCtx.lineTo(p2.x, p2.y);
+                        mCtx.stroke();
+                    }
+                }
+            }
+        }
+        let midnightAnimating = false;
+        function mAnimate() {
+            if (!midnightAnimating) return;
+            mCtx.clearRect(0, 0, mWidth, mHeight);
+            mStars.forEach(s => { s.update(); s.draw(); });
+            mDrawLines();
+            mParticles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(mAnimate);
+        }
+        function checkMidnight() {
+            const hour = new Date().getHours();
+            const isMidnight = hour === 0;
+            if (isMidnight && !midnightAnimating) {
+                midnightAnimating = true;
+                midnightCanvas.style.display = 'block';
+                midnightVignette.style.display = 'block';
+                document.body.classList.remove('day-bg', 'night-bg');
+                document.body.style.backgroundImage = 'none';
+                document.body.style.backgroundColor = '#000205';
+                mSetup();
+                mAnimate();
+            } else if (!isMidnight && midnightAnimating) {
+                midnightAnimating = false;
+                midnightCanvas.style.display = 'none';
+                midnightVignette.style.display = 'none';
+                updateBackground(new Date().getHours() >= 6 && new Date().getHours() < 20);
+            }
+        }
+        checkMidnight();
+        setInterval(checkMidnight, 60000);
+        window.addEventListener('resize', () => { if (midnightAnimating) mSetup(); });
     </script>
 </body>
 </html>
