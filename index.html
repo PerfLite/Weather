@@ -665,6 +665,8 @@
             }
         }
         let midnightAnimating = false;
+        let midnightCheckInterval = null;
+        
         function mAnimate() {
             if (!midnightAnimating) return;
             mCtx.clearRect(0, 0, mWidth, mHeight);
@@ -673,27 +675,50 @@
             mParticles.forEach(p => { p.update(); p.draw(); });
             requestAnimationFrame(mAnimate);
         }
+        
+        function startMidnightAnimation() {
+            if (midnightAnimating) return;
+            midnightAnimating = true;
+            midnightCanvas.style.display = 'block';
+            midnightVignette.style.display = 'block';
+            document.body.classList.remove('day-bg', 'night-bg');
+            document.body.style.backgroundImage = 'none';
+            document.body.style.backgroundColor = '#000205';
+            mSetup();
+            mAnimate();
+        }
+        
+        function stopMidnightAnimation() {
+            if (!midnightAnimating) return;
+            midnightAnimating = false;
+            midnightCanvas.style.display = 'none';
+            midnightVignette.style.display = 'none';
+            updateBackground(new Date().getHours() >= 6 && new Date().getHours() < 18);
+        }
+        
         function checkMidnight() {
             const hour = new Date().getHours();
             const isNight = hour >= 23 || hour < 5;
             if (isNight && !midnightAnimating) {
-                midnightAnimating = true;
-                midnightCanvas.style.display = 'block';
-                midnightVignette.style.display = 'block';
-                document.body.classList.remove('day-bg', 'night-bg');
-                document.body.style.backgroundImage = 'none';
-                document.body.style.backgroundColor = '#000205';
-                mSetup();
-                mAnimate();
+                startMidnightAnimation();
             } else if (!isNight && midnightAnimating) {
-                midnightAnimating = false;
-                midnightCanvas.style.display = 'none';
-                midnightVignette.style.display = 'none';
-                updateBackground(new Date().getHours() >= 6 && new Date().getHours() < 18);
+                stopMidnightAnimation();
             }
         }
+        
+        function scheduleNextCheck() {
+            const now = new Date();
+            const secondsUntilNextMinute = 60 - now.getSeconds();
+            setTimeout(() => {
+                checkMidnight();
+                scheduleNextCheck();
+            }, secondsUntilNextMinute * 1000);
+        }
+        
+        // Запускаем проверку сразу и планируем следующие проверки
         checkMidnight();
-        setInterval(checkMidnight, 60000);
+        scheduleNextCheck();
+        
         window.addEventListener('resize', () => { if (midnightAnimating) mSetup(); });
     </script>
 </body>
